@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 
 class PineappleSetupScreen extends StatefulWidget {
-  const PineappleSetupScreen({super.key});
+  final int playerCount;
+
+  const PineappleSetupScreen({super.key, required this.playerCount});
 
   @override
   State<PineappleSetupScreen> createState() => _PineappleSetupScreenState();

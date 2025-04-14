@@ -22,12 +22,14 @@ class MainMenuScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const PineappleSetupScreen(),
+                    builder:
+                        (context) => const PineappleSetupScreen(playerCount: 2),
                   ),
                 );
               },
               child: const Text('Lokales Spiel'),
             ),
+
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: null, // deaktiviert

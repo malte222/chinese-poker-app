@@ -1,30 +1,22 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final int playerCount;
+
+  const HomeScreen({super.key, required this.playerCount});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Chinese Poker Home')),
+      appBar: AppBar(
+        title: Text(
+          'Spiel mit $playerCount Spieler${playerCount > 1 ? "n" : ""}',
+        ),
+      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Willkommen bei Pineapple Chinese Poker!',
-              style: TextStyle(fontSize: 20),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Hier kannst du später Navigation zu deinem Setup oder Spiel starten
-                Navigator.pushNamed(context, '/setup');
-              },
-              child: const Text('Spiel starten'),
-            ),
-          ],
+        child: Text(
+          'Das Spiel startet mit $playerCount Spieler${playerCount > 1 ? "n" : ""}.',
+          style: const TextStyle(fontSize: 20),
         ),
       ),
     );

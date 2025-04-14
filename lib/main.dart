@@ -127,8 +127,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildDraggableCard(String card, List<String> origin) {
     return DragTarget<String>(
-      onWillAccept: (data) => data != card,
-      onAccept: (data) {
+      onWillAcceptWithDetails: (DragTargetDetails<String> details) {
+        return details.data != card;
+      },
+      onAcceptWithDetails: (DragTargetDetails<String> details) {
+        final data = details.data;
         final allLists = [hand, front, middle, back];
         for (var list in allLists) {
           if (list.contains(data)) {
@@ -158,8 +161,11 @@ class _HomeScreenState extends State<HomeScreen> {
   ) {
     String? card = index < targetList.length ? targetList[index] : null;
     return DragTarget<String>(
-      onWillAccept: (data) => true,
-      onAccept: (data) {
+      onWillAcceptWithDetails: (DragTargetDetails<String> details) {
+        return true;
+      },
+      onAcceptWithDetails: (DragTargetDetails<String> details) {
+        final data = details.data;
         final allLists = [hand, front, middle, back];
         for (var list in allLists) {
           if (list.contains(data)) {
