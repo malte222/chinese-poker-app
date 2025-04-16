@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home_screen.dart';
+import 'game_screen.dart';
 
 class PineappleSetupScreen extends StatefulWidget {
   final int playerCount;
@@ -17,7 +17,7 @@ class _PineappleSetupScreenState extends State<PineappleSetupScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => HomeScreen(playerCount: selectedPlayers),
+        builder: (context) => GameScreen(playerCount: selectedPlayers),
       ),
     );
   }
