@@ -1,20 +1,42 @@
 // lib/controllers/game_controller.dart
 import 'dart:math';
-import '../models/card_model.dart';
-import '../models/game_state.dart';
-import '../models/player_model.dart';
+import 'package:flutter/material.dart';
 
-class GameController {
-  late GameState gameState;
+class GameController extends ChangeNotifier {
+  // Beispielhafte Felder, die du aus deiner bisherigen Logik übernehmen kannst.
+  late List<String> deck;
+  int currentPlayer = 1;
+  int round = 1;
+  bool player1Finished = false;
+  bool player2Finished = false;
+
+  // Hände als Liste von Kartencodes, z. B. "2C", "KD", etc.
+  List<String> player1Hand = [];
+  List<String> player2Hand = [];
+
+  // Fixierte Boards als Listen von String? (13 Slots)
+  List<String?> player1Front = List.filled(3, null);
+  List<String?> player1Middle = List.filled(5, null);
+  List<String?> player1Back = List.filled(5, null);
+  List<String?> player2Front = List.filled(3, null);
+  List<String?> player2Middle = List.filled(5, null);
+  List<String?> player2Back = List.filled(5, null);
+
+  // Tracker für neue Platzierungen ab Runde 2
+  List<int> player1NewPlacements = [];
+  List<int> player2NewPlacements = [];
+
+  // Kartengrößen (für UI-Komponenten)
+  final double cardWidth = 45;
+  final double cardHeight = 68;
 
   GameController() {
-    _initializeGame();
+    _startGame();
   }
 
-  void _initializeGame() {
-    // Erstelle und mische ein Deck
-    List<String> suits = ['C', 'D', 'H', 'S'];
-    List<String> ranks = [
+  void _startGame() {
+    final suits = ['C', 'D', 'H', 'S'];
+    final ranks = [
       '2',
       '3',
       '4',
@@ -29,62 +51,71 @@ class GameController {
       'K',
       'A',
     ];
-    List<CardModel> deck = [
+    deck = [
       for (var s in suits)
-        for (var r in ranks) CardModel(rank: r, suit: s),
+        for (var r in ranks) '$r$s',
     ];
     deck.shuffle(Random());
-
-    // Erstelle Spieler
-    PlayerModel player1 = PlayerModel(name: 'Spieler 1');
-    PlayerModel player2 = PlayerModel(name: 'Spieler 2');
-
-    // Runde 1: 5 Karten an beide Spieler
-    player1.hand = deck.sublist(0, 5);
-    player2.hand = deck.sublist(5, 10);
+    // Runde 1: 5 Karten für beide Spieler
+    player1Hand = deck.sublist(0, 5);
+    player2Hand = deck.sublist(5, 10);
     deck = deck.sublist(10);
-
-    gameState = GameState(
-      round: 1,
-      currentPlayer: 1,
-      deck: deck,
-      player1: player1,
-      player2: player2,
-    );
+    notifyListeners();
   }
 
-  // Beispielmethoden:
-  void placeCard({
-    required int playerNum,
-    required String cardCode,
-    required String row, // "front", "middle", "back"
-    required int slotIndex,
-    // Falls ab Runde 2, tracke neue Platzierung
-    bool isNewPlacement = false,
-  }) {
-    PlayerModel player = playerNum == 1 ? gameState.player1 : gameState.player2;
-    // Logic: Nur in leere Slots legen, dann Karte aus der Hand entfernen
-    List<CardModel?> targetRow;
-    if (row == 'front') {
-      targetRow = player.front;
-    } else if (row == 'middle') {
-      targetRow = player.middle;
+  void _drawNewHand(int player) {
+    int count = 3;
+    if (deck.length < count) count = deck.length;
+    if (player == 1) {
+      player1Hand = deck.sublist(0, count);
     } else {
-      targetRow = player.back;
+      player2Hand = deck.sublist(0, count);
     }
-    if (targetRow[slotIndex] == null) {
-      // Entferne Karte aus der Hand
-      player.hand.removeWhere((card) => card.code == cardCode);
-      // Füge Karte in Slot
-      targetRow[slotIndex] = CardModel.fromCode(cardCode);
-      if (isNewPlacement) {
-        player.newPlacements.add(slotIndex);
+    deck = deck.sublist(count);
+    notifyListeners();
+  }
+
+  // Beispielmethode: Endturn, die den Zustand ändert.
+  void endTurn() {
+    // Hier implementierst du deine bestehende Logik (aus _endTurn) und rufst notifyListeners() am Ende auf.
+    // Beispiel (stark vereinfacht):
+    if (round == 1) {
+      if (currentPlayer == 1 && player1Hand.isEmpty) {
+        player1Finished = true;
+        currentPlayer = 2;
+      } else if (currentPlayer == 2 && player2Hand.isEmpty) {
+        player2Finished = true;
+        if (player1Finished && player2Finished) {
+          round = 2;
+          player1NewPlacements = [];
+          player2NewPlacements = [];
+          currentPlayer = 1;
+          _drawNewHand(1);
+        } else {
+          currentPlayer = 1;
+        }
+      }
+    } else {
+      List<int> currentPlacements =
+          currentPlayer == 1 ? player1NewPlacements : player2NewPlacements;
+      if (currentPlacements.length == 2) {
+        if (currentPlayer == 1 && player1Hand.length == 1) {
+          player1Hand.clear();
+        } else if (currentPlayer == 2 && player2Hand.length == 1) {
+          player2Hand.clear();
+        }
+        if (currentPlayer == 1) {
+          player1NewPlacements = [];
+        } else {
+          player2NewPlacements = [];
+        }
+        currentPlayer = currentPlayer == 1 ? 2 : 1;
+        round++;
+        _drawNewHand(currentPlayer);
       }
     }
+    notifyListeners();
   }
 
-  void endTurn() {
-    // Logik zum Wechseln des Spielers, Ziehen neuer Karten etc.
-    // Hier würdest du deinen bisherigen _endTurn()-Code einbauen.
-  }
+  // Weitere Methoden zur Handhabung von Kartenplatzierungen (placeCard, moveCard, etc.)
 }

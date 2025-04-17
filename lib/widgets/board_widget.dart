@@ -11,14 +11,14 @@ class BoardWidget extends StatelessWidget {
   final double slotHeight;
 
   const BoardWidget({
-    Key? key,
+    super.key,
     required this.front,
     required this.middle,
     required this.back,
     required this.canDrag,
     this.slotWidth = 45,
     this.slotHeight = 68,
-  }) : super(key: key);
+  });
 
   Widget _buildRow(List<String?> slots, int count) {
     return Row(
@@ -29,7 +29,9 @@ class BoardWidget extends StatelessWidget {
           canDrag: canDrag,
           width: slotWidth,
           height: slotHeight,
-          // onCardDropped: () => // Hier später Callback an den Controller
+          onCardDropped: (data) {
+            // Hier kannst du den Callback implementieren – z. B. per Provider an den Controller weiterreichen.
+          },
         );
       }),
     );

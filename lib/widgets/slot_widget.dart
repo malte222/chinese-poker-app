@@ -7,26 +7,25 @@ class SlotWidget extends StatelessWidget {
   final bool canDrag;
   final double width;
   final double height;
-  final VoidCallback?
-  onCardDropped; // Hier kannst du später den Callback definieren, der z. B. GameController-Methoden aufruft.
+  final void Function(String) onCardDropped;
 
   const SlotWidget({
-    Key? key,
+    super.key,
     required this.cardCode,
     required this.canDrag,
     required this.width,
     required this.height,
-    this.onCardDropped,
-  }) : super(key: key);
+    required this.onCardDropped,
+  });
 
   @override
   Widget build(BuildContext context) {
     return DragTarget<String>(
-      onWillAccept: (_) => true,
-      onAccept: (data) {
-        if (onCardDropped != null) onCardDropped!();
+      onWillAcceptWithDetails: (_) => true,
+      onAcceptWithDetails: (details) {
+        onCardDropped(details.data);
       },
-      builder: (context, candidate, rejected) {
+      builder: (context, candidateData, rejectedData) {
         return Container(
           width: width,
           height: height,

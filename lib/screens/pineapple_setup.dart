@@ -1,10 +1,9 @@
+// lib/screens/pineapple_setup.dart
 import 'package:flutter/material.dart';
 import 'game_screen.dart';
 
 class PineappleSetupScreen extends StatefulWidget {
-  final int playerCount;
-
-  const PineappleSetupScreen({super.key, required this.playerCount});
+  const PineappleSetupScreen({super.key});
 
   @override
   State<PineappleSetupScreen> createState() => _PineappleSetupScreenState();
@@ -31,7 +30,7 @@ class _PineappleSetupScreenState extends State<PineappleSetupScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              'Pineapple OFC - Spieleranzahl wählen',
+              'Pineapple OFC – Spieleranzahl wählen',
               style: TextStyle(fontSize: 20, color: Colors.white),
             ),
             const SizedBox(height: 24),
