@@ -23,10 +23,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
       initialRoute: '/',
-      routes: {
-        '/': (context) => const MainMenuScreen(),
-        // Wir navigieren direkt via Navigator.push, daher hier kein Eintrag für /game nötig
-      },
+      routes: {'/': (context) => const MainMenuScreen()},
     );
   }
 }

@@ -22,8 +22,7 @@ class MainMenuScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder:
-                        (context) => const PineappleSetupScreen(playerCount: 2),
+                    builder: (context) => const PineappleSetupScreen(),
                   ),
                 );
               },

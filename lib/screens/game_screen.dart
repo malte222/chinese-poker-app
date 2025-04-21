@@ -1,4 +1,3 @@
-// lib/screens/game_screen.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
@@ -6,34 +5,123 @@ import '../widgets/board_widget.dart';
 import '../widgets/hand_widget.dart';
 
 class GameScreen extends StatelessWidget {
-  /// Anzahl der Spieler (2 oder 3)
   final int playerCount;
-
   const GameScreen({super.key, required this.playerCount});
 
   @override
   Widget build(BuildContext context) {
     final game = context.watch<GameController>();
+    final isP1 = game.currentPlayer == 1;
 
-    // aktuell unterstützen wir nur playerCount == 2,
-    // später kannst du hier auf playerCount reagieren.
-    final isPlayer1 = game.currentPlayer == 1;
+    // Slot‐Daten für aktive/ inaktive Spieler
+    final activeFront = isP1 ? game.player1Front : game.player2Front;
+    final activeMiddle = isP1 ? game.player1Middle : game.player2Middle;
+    final activeBack = isP1 ? game.player1Back : game.player2Back;
+    final activeHand = isP1 ? game.player1Hand : game.player2Hand;
 
-    // … Rest bleibt unverändert …
-    final slotW = game.cardWidth;
-    final slotH = game.cardHeight;
+    final inactiveFront = isP1 ? game.player2Front : game.player1Front;
+    final inactiveMiddle = isP1 ? game.player2Middle : game.player1Middle;
+    final inactiveBack = isP1 ? game.player2Back : game.player1Back;
 
-    // Inaktives Board
-    final inactiveFront = isPlayer1 ? game.player2Front : game.player1Front;
-    final inactiveMiddle = isPlayer1 ? game.player2Middle : game.player1Middle;
-    final inactiveBack = isPlayer1 ? game.player2Back : game.player1Back;
+    final w = game.cardWidth;
+    final h = game.cardHeight;
 
-    // Aktives Board
-    final activeFront = isPlayer1 ? game.player1Front : game.player2Front;
-    final activeMiddle = isPlayer1 ? game.player1Middle : game.player2Middle;
-    final activeBack = isPlayer1 ? game.player1Back : game.player2Back;
-    final activeHand = isPlayer1 ? game.player1Hand : game.player2Hand;
+    if (game.isGameOver) {
+      // Zeige eine Übersicht beider Boards nebeneinander
+      return Scaffold(
+        backgroundColor: Colors.black,
+        appBar: AppBar(title: const Text("Spiel beendet")),
+        body: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              // Board von Spieler 1
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Spieler 1",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 8),
+                  BoardWidget(
+                    front: game.player1Front,
+                    middle: game.player1Middle,
+                    back: game.player1Back,
+                    slotWidth: game.cardWidth,
+                    slotHeight: game.cardHeight,
+                    onCardDropped: (_, __, ___) {},
+                    isSlotDraggable: (_, __) => false,
+                  ),
+                ],
+              ),
+              // Board von Spieler 2
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Spieler 2",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  const SizedBox(height: 8),
+                  BoardWidget(
+                    front: game.player2Front,
+                    middle: game.player2Middle,
+                    back: game.player2Back,
+                    slotWidth: game.cardWidth,
+                    slotHeight: game.cardHeight,
+                    onCardDropped: (_, __, ___) {},
+                    isSlotDraggable: (_, __) => false,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
+    // pro Slot prüfen, ob er aktuell drag-fähig sein soll:
+    bool isSlotDraggable(String row, int idx) {
+      // 1) Nur im aktiven Board:
+      if ((isP1 && game.currentPlayer != 1) ||
+          (!isP1 && game.currentPlayer != 2)) {
+        return false;
+      }
+
+      // Shortcut auf die Slot-Listen
+      final slotArray =
+          {
+            'front': activeFront,
+            'middle': activeMiddle,
+            'back': activeBack,
+          }[row]!;
+
+      // R1: solange Spieler noch nicht bestätigt hat, darf alles verschoben werden
+      if (game.round == 1) {
+        return true;
+      }
+
+      // Ab R2: nur leere Slots (für neue Platzierung) oder
+      // schon in dieser Runde gelegte Slots („neue Platzierungen“) sind drag-fähig.
+      final placements =
+          isP1 ? game.player1NewPlacements : game.player2NewPlacements;
+
+      // 2a) Leerer Slot und noch weniger als 2 neue Karten gelegt → darf legen
+      if (slotArray[idx] == null && placements.length < 2) {
+        return true;
+      }
+
+      // 2b) Bereits in dieser Runde platzierter Slot → darf zwischen den neuen Plätzten verschoben werden
+      if (slotArray[idx] != null && placements.contains(idx)) {
+        return true;
+      }
+
+      // Alles andere (alte, fixierte Slots) bleibt undraggable
+      return false;
+    }
+
+    // Hand‐ oder Button‐Anzeige analog deiner bisherigen Logik
     Widget handArea;
     if (game.round == 1) {
       handArea =
@@ -41,11 +129,11 @@ class GameScreen extends StatelessWidget {
               ? HandWidget(
                 hand: activeHand,
                 draggable: true,
-                cardWidth: slotW,
-                cardHeight: slotH,
+                cardWidth: w,
+                cardHeight: h,
               )
               : SizedBox(
-                height: slotH + 8,
+                height: h + 8,
                 child: ElevatedButton.icon(
                   onPressed: game.endTurn,
                   icon: const Icon(Icons.check),
@@ -56,7 +144,7 @@ class GameScreen extends StatelessWidget {
       handArea =
           activeHand.length == 1
               ? SizedBox(
-                height: slotH + 8,
+                height: h + 8,
                 child: ElevatedButton.icon(
                   onPressed: game.endTurn,
                   icon: const Icon(Icons.check),
@@ -66,8 +154,8 @@ class GameScreen extends StatelessWidget {
               : HandWidget(
                 hand: activeHand,
                 draggable: true,
-                cardWidth: slotW,
-                cardHeight: slotH,
+                cardWidth: w,
+                cardHeight: h,
               );
     }
 
@@ -75,6 +163,7 @@ class GameScreen extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
+          // Inaktives, fixiertes Board
           Positioned(
             left: 20,
             top: 40,
@@ -82,11 +171,15 @@ class GameScreen extends StatelessWidget {
               front: inactiveFront,
               middle: inactiveMiddle,
               back: inactiveBack,
-              canDrag: false,
-              slotWidth: slotW,
-              slotHeight: slotH,
+              slotWidth: w,
+              slotHeight: h,
+              // keine Drops hier
+              onCardDropped: (_, __, ___) {},
+              isSlotDraggable: (_, __) => false,
             ),
           ),
+
+          // Aktives Board
           Align(
             alignment: Alignment.center,
             child: Column(
@@ -97,14 +190,29 @@ class GameScreen extends StatelessWidget {
                   style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 const SizedBox(height: 8),
+
                 BoardWidget(
                   front: activeFront,
                   middle: activeMiddle,
                   back: activeBack,
-                  canDrag: true,
-                  slotWidth: slotW,
-                  slotHeight: slotH,
+                  slotWidth: w,
+                  slotHeight: h,
+
+                  // Callback nur ausführen, wenn isSlotDraggable true liefert:
+                  onCardDropped: (card, row, idx) {
+                    if (!isSlotDraggable(row, idx)) return;
+                    game.placeCard(
+                      player: game.currentPlayer,
+                      cardCode: card,
+                      row: row,
+                      slotIndex: idx,
+                      isNewPlacement: game.round >= 2,
+                    );
+                  },
+
+                  isSlotDraggable: isSlotDraggable,
                 ),
+
                 const SizedBox(height: 8),
                 handArea,
               ],

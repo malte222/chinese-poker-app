@@ -7,7 +7,6 @@ class CardModel {
 
   String get code => '$rank$suit';
 
-  // Beispielmethode, um aus einem Code ein CardModel zu erzeugen
   factory CardModel.fromCode(String code) {
     if (code.length < 2) throw ArgumentError('Ungültiger Kartencode');
     return CardModel(
