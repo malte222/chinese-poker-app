@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import '/utils/round_scorer.dart';
 
 /// Spiel-Controller mit allen Logiken für Pineapple OFC.
 class GameController extends ChangeNotifier {
@@ -31,6 +32,9 @@ class GameController extends ChangeNotifier {
   /// Tracker für neue Platzierungen ab Runde 2 (max 2 pro Zug).
   List<int> player1NewPlacements = [];
   List<int> player2NewPlacements = [];
+
+  List<int> player1Scores = [];
+  List<int> player2Scores = [];
 
   /// Standard-Kartengrößen für das UI.
   final double cardWidth = 45;
@@ -200,15 +204,25 @@ class GameController extends ChangeNotifier {
       }
     }
     notifyListeners();
-    if (isGameOver) {
-      // hier könntest du noch eine eigene Flag setzen,
-      // z.B. gameOver = true; oder direkt notifyListeners()
+    if (isRoundOver) {
+      final (score1, score2) = RoundScorer.calculate(
+        front1: player1Front,
+        middle1: player1Middle,
+        back1: player1Back,
+        front2: player2Front,
+        middle2: player2Middle,
+        back2: player2Back,
+      );
+
+      player1Scores.add(score1);
+      player2Scores.add(score2);
+
       notifyListeners();
     }
   }
 
   /// Gibt true zurück, wenn alle Slots beider Spieler nicht mehr null sind.
-  bool get isGameOver {
+  bool get isRoundOver {
     // sammle alle Slots beider Spieler
     final slots1 = [...player1Front, ...player1Middle, ...player1Back];
     final slots2 = [...player2Front, ...player2Middle, ...player2Back];

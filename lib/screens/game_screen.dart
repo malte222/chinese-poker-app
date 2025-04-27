@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../controllers/game_controller.dart';
 import '../widgets/board_widget.dart';
 import '../widgets/hand_widget.dart';
+import '../widgets/rules_dialog.dart';
+import '../widgets/score_dialog.dart';
 
 class GameScreen extends StatelessWidget {
   final int playerCount;
@@ -26,11 +28,11 @@ class GameScreen extends StatelessWidget {
     final w = game.cardWidth;
     final h = game.cardHeight;
 
-    if (game.isGameOver) {
+    if (game.isRoundOver) {
       // Zeige eine Übersicht beider Boards nebeneinander
       return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(title: const Text("Spiel beendet")),
+        appBar: AppBar(title: const Text("Runde beendet")),
         body: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -166,7 +168,7 @@ class GameScreen extends StatelessWidget {
           // Inaktives, fixiertes Board
           Positioned(
             left: 20,
-            top: 40,
+            top: 74,
             child: BoardWidget(
               front: inactiveFront,
               middle: inactiveMiddle,
@@ -216,6 +218,35 @@ class GameScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 handArea,
               ],
+            ),
+          ),
+          // ℹ️ Info-Button rechts oben
+          Positioned(
+            top: 16,
+            right: 16,
+            child: IconButton(
+              icon: const Icon(Icons.info_outline, color: Colors.white),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const RulesDialog(),
+                );
+              },
+            ),
+          ),
+          // Listen-Button links oben (für Scores)
+          Positioned(
+            left: 10,
+            top: 40,
+            child: IconButton(
+              icon: const Icon(Icons.list),
+              color: Colors.white,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => const ScoreDialog(),
+                );
+              },
             ),
           ),
         ],
