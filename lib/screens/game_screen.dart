@@ -40,7 +40,7 @@ class GameScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Spieler 1 (${game.lastRoundScorePlayer1 >= 0 ? '+' : ''}${game.lastRoundScorePlayer1})",
+                    "Spieler 1 (${game.lastRoundScorePlayer1 > 0 ? '+' : ''}${game.lastRoundScorePlayer1})",
                     style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   const SizedBox(height: 8),
@@ -61,7 +61,7 @@ class GameScreen extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    "Spieler 2 (${game.lastRoundScorePlayer2 >= 0 ? '+' : ''}${game.lastRoundScorePlayer2})",
+                    "Spieler 2 (${game.lastRoundScorePlayer2 > 0 ? '+' : ''}${game.lastRoundScorePlayer2})",
                     style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   const SizedBox(height: 8),
