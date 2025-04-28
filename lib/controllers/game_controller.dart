@@ -36,6 +36,9 @@ class GameController extends ChangeNotifier {
   List<int> player1Scores = [];
   List<int> player2Scores = [];
 
+  int lastRoundScorePlayer1 = 0;
+  int lastRoundScorePlayer2 = 0;
+
   /// Standard-Kartengrößen für das UI.
   final double cardWidth = 45;
   final double cardHeight = 68;
@@ -47,6 +50,62 @@ class GameController extends ChangeNotifier {
 
   /// Initialisiert und mischt das Deck, verteilt die ersten 5 Karten.
   void _startGame() {
+    final suits = ['c', 'd', 'h', 's'];
+    final ranks = [
+      '2',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+      'T',
+      'J',
+      'Q',
+      'K',
+      'A',
+    ];
+    deck = [
+      for (var s in suits)
+        for (var r in ranks) '$r$s',
+    ];
+    deck.shuffle(Random());
+
+    player1Hand = deck.sublist(0, 5);
+    player2Hand = deck.sublist(5, 10);
+    deck = deck.sublist(10);
+
+    notifyListeners();
+  }
+
+  void startNextRound() {
+    // Alles zurücksetzen
+    player1Hand.clear();
+    player2Hand.clear();
+
+    player1Front = List.filled(3, null);
+    player1Middle = List.filled(5, null);
+    player1Back = List.filled(5, null);
+    player2Front = List.filled(3, null);
+    player2Middle = List.filled(5, null);
+    player2Back = List.filled(5, null);
+
+    player1NewPlacements = [];
+    player2NewPlacements = [];
+
+    // Startspieler wechselt!
+    currentPlayer = currentPlayer == 1 ? 2 : 1;
+
+    round = 1;
+
+    player1Finished = false;
+    player2Finished = false;
+
+    lastRoundScorePlayer1 = 0;
+    lastRoundScorePlayer2 = 0;
+
+    // Jetzt gezielt neu Karten austeilen:
     final suits = ['c', 'd', 'h', 's'];
     final ranks = [
       '2',
@@ -205,7 +264,7 @@ class GameController extends ChangeNotifier {
     }
     notifyListeners();
     if (isRoundOver) {
-      final (score1, score2) = RoundScorer.calculate(
+      final (p1, p2) = RoundScorer.calculate(
         front1: player1Front,
         middle1: player1Middle,
         back1: player1Back,
@@ -214,8 +273,11 @@ class GameController extends ChangeNotifier {
         back2: player2Back,
       );
 
-      player1Scores.add(score1);
-      player2Scores.add(score2);
+      lastRoundScorePlayer1 = p1;
+      lastRoundScorePlayer2 = p2;
+
+      player1Scores.add(p1);
+      player2Scores.add(p2);
 
       notifyListeners();
     }

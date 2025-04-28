@@ -29,53 +29,64 @@ class GameScreen extends StatelessWidget {
     final h = game.cardHeight;
 
     if (game.isRoundOver) {
-      // Zeige eine Übersicht beider Boards nebeneinander
       return Scaffold(
         backgroundColor: Colors.black,
-        appBar: AppBar(title: const Text("Runde beendet")),
         body: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              // Board von Spieler 1
+              // Spieler 1
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    "Spieler 1",
-                    style: TextStyle(color: Colors.white),
+                  Text(
+                    "Spieler 1 (${game.lastRoundScorePlayer1 >= 0 ? '+' : ''}${game.lastRoundScorePlayer1})",
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   const SizedBox(height: 8),
                   BoardWidget(
                     front: game.player1Front,
                     middle: game.player1Middle,
                     back: game.player1Back,
+                    isSlotDraggable: (_, __) => false,
+                    onCardDropped: (_, __, ___) {},
                     slotWidth: game.cardWidth,
                     slotHeight: game.cardHeight,
-                    onCardDropped: (_, __, ___) {},
-                    isSlotDraggable: (_, __) => false,
                   ),
                 ],
               ),
-              // Board von Spieler 2
+
+              // Spieler 2
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    "Spieler 2",
-                    style: TextStyle(color: Colors.white),
+                  Text(
+                    "Spieler 2 (${game.lastRoundScorePlayer2 >= 0 ? '+' : ''}${game.lastRoundScorePlayer2})",
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   const SizedBox(height: 8),
                   BoardWidget(
                     front: game.player2Front,
                     middle: game.player2Middle,
                     back: game.player2Back,
+                    isSlotDraggable: (_, __) => false,
+                    onCardDropped: (_, __, ___) {},
                     slotWidth: game.cardWidth,
                     slotHeight: game.cardHeight,
-                    onCardDropped: (_, __, ___) {},
-                    isSlotDraggable: (_, __) => false,
                   ),
                 ],
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  context.read<GameController>().startNextRound();
+                },
+                icon: const Icon(Icons.refresh),
+                label: const Text("Neue Runde starten"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                ),
               ),
             ],
           ),
