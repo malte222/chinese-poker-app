@@ -4,10 +4,11 @@ import 'package:flutter/services.dart'; // Für SystemChrome
 import 'package:provider/provider.dart';
 import 'controllers/game_controller.dart';
 import 'screens/main_menu.dart';
+import 'utils/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  Logger.log('App started');
   // Nur Landscape-Modus zulassen
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,

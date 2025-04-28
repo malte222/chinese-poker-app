@@ -7,36 +7,42 @@ class MainMenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'OFC Pineapple Poker',
-              style: TextStyle(fontSize: 28, color: Colors.white),
+      body: Stack(
+        children: [
+          // Hintergrundbild
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/main_menu.png', // Pfad anpassen!
+              fit: BoxFit.cover,
             ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PineappleSetupScreen(),
-                  ),
-                );
-              },
-              child: const Text('Lokales Spiel'),
+          ),
+          // Menü-Inhalt
+          Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 150),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const PineappleSetupScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text('Pass & Play'),
+                ),
+                const SizedBox(height: 1),
+                ElevatedButton(
+                  onPressed: null, // deaktiviert
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
+                  child: const Text('Play online'),
+                ),
+              ],
             ),
-
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: null, // deaktiviert
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-              child: const Text('Online-Spiel (bald verfügbar)'),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

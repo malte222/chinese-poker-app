@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import '/utils/round_scorer.dart';
+import '/utils/logger.dart';
 
 /// Spiel-Controller mit allen Logiken für Pineapple OFC.
 class GameController extends ChangeNotifier {
@@ -71,7 +72,7 @@ class GameController extends ChangeNotifier {
         for (var r in ranks) '$r$s',
     ];
     deck.shuffle(Random());
-
+    Logger.log('New game started. Deck was shuffled');
     player1Hand = deck.sublist(0, 5);
     player2Hand = deck.sublist(5, 10);
     deck = deck.sublist(10);

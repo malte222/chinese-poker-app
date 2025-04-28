@@ -13,22 +13,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  path_provider: ^2.1.2
   cupertino_icons: ^1.0.8
   provider: ^6.0.0
-  poker_solver: ^1.0.0
-  
+  poker_solver: ^1.0.0  
+  just_audio: ^0.9.37
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   test: ^1.24.0
   flutter_lints: ^3.0.1
+  flutter_launcher_icons: ^0.14.3
 
-
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#ffffff"  # optional Hintergrundfarbe anpassen
+  adaptive_icon_foreground: "assets/icon/icon.png"
 
 # The following section is specific to Flutter packages.
 flutter:
   uses-material-design: true
   assets:
     - assets/cards/
-  
+    - assets/images/
+    - assets/music/
