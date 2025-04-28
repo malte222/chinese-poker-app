@@ -5,10 +5,15 @@ import 'package:provider/provider.dart';
 import 'controllers/game_controller.dart';
 import 'screens/main_menu.dart';
 import 'utils/logger.dart';
+import 'services/audio_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Logger.log('App started');
+
+  // Initialisiere den Player gleich beim App-Start
+  await AudioManager.instance.init();
+
   // Nur Landscape-Modus zulassen
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
