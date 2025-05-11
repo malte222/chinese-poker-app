@@ -14,7 +14,7 @@ class ScoreDialog extends StatelessWidget {
 
     return AlertDialog(
       backgroundColor: Colors.black87,
-      title: const Text('Punktestand', style: TextStyle(color: Colors.white)),
+      title: const Text('Score', style: TextStyle(color: Colors.white)),
       content: SizedBox(
         width: double.maxFinite,
         child: ListView.builder(
@@ -26,7 +26,7 @@ class ScoreDialog extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    "Runde ${index + 1}",
+                    "Round ${index + 1}",
                     style: const TextStyle(color: Colors.white),
                   ),
                   Text(
@@ -44,7 +44,7 @@ class ScoreDialog extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
-                      "Summe",
+                      "Total",
                       style: TextStyle(
                         color: Colors.amber,
                         fontWeight: FontWeight.bold,

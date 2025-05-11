@@ -14,6 +14,8 @@ class GameController extends ChangeNotifier {
   /// Aktuelle Runde: 1 = erste 5 Karten, ab 2 = je 3 Karten pro Zug.
   int round = 1;
 
+  int round1StartPlayer = 1;
+
   /// Flags, ob Spieler Runde 1 abgeschlossen haben.
   bool player1Finished = false;
   bool player2Finished = false;
@@ -39,6 +41,8 @@ class GameController extends ChangeNotifier {
 
   int lastRoundScorePlayer1 = 0;
   int lastRoundScorePlayer2 = 0;
+
+  bool lastRoundCalculated = false;
 
   /// Standard-Kartengrößen für das UI.
   final double cardWidth = 45;
@@ -73,6 +77,7 @@ class GameController extends ChangeNotifier {
     ];
     deck.shuffle(Random());
     Logger.log('New game started. Deck was shuffled');
+    lastRoundCalculated = false;
     player1Hand = deck.sublist(0, 5);
     player2Hand = deck.sublist(5, 10);
     deck = deck.sublist(10);
@@ -95,8 +100,11 @@ class GameController extends ChangeNotifier {
     player1NewPlacements = [];
     player2NewPlacements = [];
 
+    lastRoundCalculated = false;
+
     // Startspieler wechselt!
     currentPlayer = currentPlayer == 1 ? 2 : 1;
+    round1StartPlayer = currentPlayer;
 
     round = 1;
 
@@ -238,8 +246,8 @@ class GameController extends ChangeNotifier {
           round = 2;
           player1NewPlacements = [];
           player2NewPlacements = [];
-          currentPlayer = 1;
-          _drawNewHand(1);
+          currentPlayer = round1StartPlayer;
+          _drawNewHand(currentPlayer);
         } else {
           currentPlayer = 1;
         }
@@ -253,14 +261,17 @@ class GameController extends ChangeNotifier {
         } else if (currentPlayer == 2 && player2Hand.length == 1) {
           player2Hand.clear();
         }
+
         if (currentPlayer == 1) {
           player1NewPlacements = [];
+          currentPlayer = 2;
+          _drawNewHand(2); // explizit hier
         } else {
           player2NewPlacements = [];
+          currentPlayer = 1;
+          round++;
+          _drawNewHand(1);
         }
-        currentPlayer = currentPlayer == 1 ? 2 : 1;
-        round++;
-        _drawNewHand(currentPlayer);
       }
     }
     notifyListeners();
@@ -279,7 +290,7 @@ class GameController extends ChangeNotifier {
 
       player1Scores.add(p1);
       player2Scores.add(p2);
-
+      lastRoundCalculated = true;
       notifyListeners();
     }
   }

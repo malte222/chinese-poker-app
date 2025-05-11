@@ -28,7 +28,7 @@ class GameScreen extends StatelessWidget {
     final h = game.cardHeight;
 
     // Runde vorbei -> Punkteanzeige
-    if (game.isRoundOver) {
+    if (game.isRoundOver && game.lastRoundCalculated) {
       return Scaffold(
         body: Stack(
           children: [
@@ -43,12 +43,12 @@ class GameScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // Spieler 1
+                  // Player 1
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Spieler 1 (${game.lastRoundScorePlayer1 > 0 ? '+' : ''}${game.lastRoundScorePlayer1})",
+                        "Player 1 (${game.lastRoundScorePlayer1 > 0 ? '+' : ''}${game.lastRoundScorePlayer1})",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -66,12 +66,12 @@ class GameScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Spieler 2
+                  // Player 2
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Spieler 2 (${game.lastRoundScorePlayer2 > 0 ? '+' : ''}${game.lastRoundScorePlayer2})",
+                        "Player 2 (${game.lastRoundScorePlayer2 > 0 ? '+' : ''}${game.lastRoundScorePlayer2})",
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -89,14 +89,14 @@ class GameScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  // Neue Runde starten
+                  // Start new round
                   const SizedBox(width: 16),
                   ElevatedButton.icon(
                     onPressed: () {
                       context.read<GameController>().startNextRound();
                     },
                     icon: const Icon(Icons.refresh),
-                    label: const Text("Neue Runde starten"),
+                    label: const Text("Start new round"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
@@ -127,7 +127,7 @@ class GameScreen extends StatelessWidget {
       return false;
     }
 
-    // Handbereich oder "Zug beenden"-Button
+    // Handbereich oder "Done"-Button
     Widget handArea;
     if (game.round == 1) {
       handArea =
@@ -143,7 +143,7 @@ class GameScreen extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: game.endTurn,
                   icon: const Icon(Icons.check),
-                  label: const Text("Zug beenden"),
+                  label: const Text("Done"),
                 ),
               );
     } else {
@@ -154,7 +154,7 @@ class GameScreen extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: game.endTurn,
                   icon: const Icon(Icons.check),
-                  label: const Text("Zug beenden"),
+                  label: const Text("Done"),
                 ),
               )
               : HandWidget(
@@ -196,7 +196,7 @@ class GameScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Spieler ${game.currentPlayer}',
+                  'Player ${game.currentPlayer}',
                   style: const TextStyle(color: Colors.white, fontSize: 20),
                 ),
                 const SizedBox(height: 8),
